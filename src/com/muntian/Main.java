@@ -2,10 +2,7 @@ package com.muntian;
 
 import com.muntian.testclasses.A;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.*;
 
 public class Main {
@@ -65,7 +62,7 @@ public class Main {
         Class clazz = object.getClass();
         for (Method method : clazz.getDeclaredMethods()) {
             if (method.getParameterCount() == 0) {
-                if (method.toString().contains("private")) {
+                if (Modifier.isPrivate(method.getModifiers())) {
                     method.setAccessible(true);
                 }
                 System.out.println(method.getName());
@@ -78,7 +75,7 @@ public class Main {
     public static void printAllSignatureWithFinal(Object object) {
         Class clazz = object.getClass();
         for (Method method : clazz.getDeclaredMethods()) {
-            if (method.toString().contains("final")) {
+            if (Modifier.isFinal(method.getModifiers())) {
                 System.out.println(method);
             }
         }
@@ -87,7 +84,7 @@ public class Main {
     //    Метод принимает Class и выводит все не публичные методы этого класса
     public static void printNonPublicMethods(Class clazz) {
         for (Method method : clazz.getDeclaredMethods()) {
-            if (!method.toString().contains("public")) {
+            if (!Modifier.isPublic(method.getModifiers())) {
                 System.out.println(method);
             }
         }
@@ -104,13 +101,13 @@ public class Main {
     public static void setFieldsByDefaultValues(Object object) throws IllegalAccessException {
         Class<?> clazz = object.getClass();
         for (Field field : clazz.getDeclaredFields()) {
-            if (field.toString().contains("private")) {
+            if (Modifier.isPrivate(field.getModifiers())) {
                 field.setAccessible(true);
 
                 Class<?> type = field.getType();
 
                 if (field.get(object) instanceof Number) {
-                    field.set(object, (byte)0);
+                    field.set(object, (byte) 0);
                 } else if (type == boolean.class) {
                     field.set(object, false);
                 } else if (type == char.class) {
@@ -126,7 +123,7 @@ public class Main {
         System.out.println("Display all private fields with their values:");
         Class<?> clazz = object.getClass();
         for (Field field : clazz.getDeclaredFields()) {
-            if (field.toString().contains("private")) {
+            if (Modifier.isPrivate(field.getModifiers())) {
                 field.setAccessible(true);
                 System.out.println(field.getName() + " = " + field.get(object));
             }
@@ -159,7 +156,7 @@ public class Main {
 
         implInterfaces = classUnit.getInterfaces();
         for (Class interfaceUnit : implInterfaces) {
-            interfaces.add(interfaceUnit.toString());
+            interfaces.add(interfaceUnit.getName());
             if (interfaceUnit.getInterfaces().length == 0) {
                 continue;
             }
